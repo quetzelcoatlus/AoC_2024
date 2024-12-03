@@ -8,7 +8,6 @@ int main(int argc, char* argv[])
 
     char *str = NULL, *tmp;
     size_t size = 0;
-    printf("name= %s\n",name);
 
     FILE* f = fopen(name,"r");
     while(getline(&str, &size, f) != -1){
@@ -52,6 +51,7 @@ int main(int argc, char* argv[])
     printf("%d\n",sum);
 
     free(str);
+    fclose(f);
 
     return 0;
 }

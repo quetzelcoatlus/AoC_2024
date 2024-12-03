@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define BIG_N 10000
+
 int main(int argc, char* argv[]) {
     char* name = argc > 1 ? argv[1] : "input";
     FILE* f = fopen(name,"r");
 
     int a,b,sum=0,dont=0;
-    char *tmp, *tmp2, buff[10000], c;
+    char *tmp, *tmp2, buff[BIG_N], c;
 
     while(fscanf(f,"%s",(char*)&buff) > 0) {
         tmp=buff;

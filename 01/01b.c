@@ -1,13 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define BIG_N 1024
+
 int main(int argc, char* argv[])
 {
-    int a[2000],b[2000],n,sum,c;
+    int a[BIG_N],b[BIG_N],n,sum,c;
+
     char* name = argc > 1 ? argv[1] : "input";
+    FILE* f = fopen(name,"r");
 
     n=0,sum=0;
-    FILE* f = fopen(name,"r");
     while(fscanf(f,"%d %d", &a[n], &b[n])==2) n++;
 
     for(int i=0; i<n; i++){
@@ -19,6 +22,8 @@ int main(int argc, char* argv[])
     }
 
     printf("%d\n",sum);
+
+    fclose(f);
 
     return 0;
 }

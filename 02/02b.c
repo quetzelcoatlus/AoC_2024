@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
     printf("%d\n",sum);
 
     free(str);
+    fclose(f);
 
     return 0;
 }
