@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
     int sum=0,n,k,asc,good;
     char* name = argc > 1 ? argv[1] : "input";
 
-    char *str = NULL, *tmp;
+    char *str = NULL;
     size_t size = 0;
 
     FILE* f = fopen(name,"r");

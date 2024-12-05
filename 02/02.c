@@ -3,7 +3,7 @@
 
 int main(int argc, char* argv[])
 {
-    int sum=0,a,b,n,i,asc,good;
+    int sum=0,a,b,asc,good;
     char* name = argc > 1 ? argv[1] : "input";
 
     char *str = NULL, *tmp;
