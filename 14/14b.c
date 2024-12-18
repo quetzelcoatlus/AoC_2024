@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
 
 #define WIDTH 101
@@ -14,27 +13,22 @@ int positive_mod(int x, int m){
     return x % m < 0 ? x % m + m : x % m;
 }
 
-double distance(int x1, int y1, int x2, int y2) {
-    return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+int distance(int x1, int y1, int x2, int y2) {
+    return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
 }
 
-double get_mean_dist() {
-    double sum = 0.0;
-    int count = 0;
+int get_mean_dist() {
+    int sum = 0;
 
-    for (int i=0; i<n; i++) {
-        for (int j = i+1; j<n; j++) {
-            sum += distance(px[i],py[i],px[j],py[j]);
-            count++;
-        }
-    }
+    for (int i=0; i<n-1; i++)
+        sum += distance(px[i],py[i],px[i+1],py[i+1]);
 
-    return sum / count;
+    return sum / n;
 }
 
 int main(int argc, char* argv[]) {
     int seconds=0;
-    double dist1, dist2;
+    int dist1, dist2;
 
     char* name = argc > 1 ? argv[1] : "input";
     FILE* fp = fopen(name,"r");
@@ -51,7 +45,7 @@ int main(int argc, char* argv[]) {
             py[i]=positive_mod((py[i] + vy[i]),HEIGHT);
         }
         dist2=get_mean_dist();
-    } while(dist2 > dist1 * 0.6);
+    } while(dist2 > dist1 / 2);
 
     if(argc > 2){
         int bool[WIDTH][HEIGHT] = {0};
