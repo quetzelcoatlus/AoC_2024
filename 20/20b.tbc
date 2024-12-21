@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <search.h>
+
+#define BIGGER_N 1<<16
+#define BIG_N 256
+#define MAX_SAVES 20
+#define MAX 1<<30
+
+char tab[BIG_N][BIG_N];
+int n=0, m, ex, ey, costs[BIG_N][BIG_N], been[BIG_N][BIG_N];
+
+int turns[4][2] = { {-1,0}, {0,-1}, {1,0}, {0,1} };
+
+char cheats[BIGGER_N][BIG_N];
+int save[BIGGER_N];
+int c=0;
+
+int sum=0;
+
+void count_path(int x, int y){
+    for (int i=0; i<4; i++) {
+        int x2 = x + turns[i][0];
+        int y2 = y + turns[i][1];
+
+        if(x2 >= 0 && y2 >= 0 && x2 < m && y2 < n && tab[y2][x2] != '#' && costs[y][x] + 1 < costs[y2][x2]){
+            costs[y2][x2] = costs[y][x] + 1;
+            count_path(x2, y2);
+        }
+    }
+}
+
+void count_saves(int sx, int sy, int x, int y, int depth){
+    printf("Starting with %d,%d - %d,%d, depth=%d\n",sx,sy,x,y,depth);
+    if((x=ex && y==ey) || depth > MAX_SAVES || (been[y][x] > 0 && been[y][x] < depth))
+        return;
+
+    been[y][x] = depth;
+
+    printf("Starting loop\n");
+
+    for (int i=0; i<4; i++) {
+        int x2 = x + turns[i][0];
+        int y2 = y + turns[i][1];
+
+        if(x2 >= 0 && y2 >= 0 && x2 < m && y2 < n){
+            if(tab[y2][x2] != '#' && costs[y2][x2] > costs[sy][sx]+depth){
+                char key[BIG_N];
+                sprintf(key,"%d-%d-%d-%d",sx,sy,x2,y2);
+                ENTRY entry = {.key = key}, *found_entry;
+
+                if((found_entry=hsearch(entry, FIND)) != NULL)
+                    continue;
+
+                strcpy(cheats[c], key);
+                save[c] = costs[y2][x2] - costs[sy][sx] - depth;
+                entry.key = cheats[c];
+                entry.data = &save[c];
+                hsearch(entry, ENTER);
+
+                if(save[c] >= 10){
+                    printf("skip from %d,%d to %d,%d of %d depth will give %d save\n",sx,sy,x2,y2,depth,save[c]);
+                    sum++;
+                }
+                c++;
+            }
+            count_saves(sx,sy,x2,y2,depth+1);
+        }
+    }
+}
+
+int main(int argc, char* argv[]) {
+    char* name = argc > 1 ? argv[1] : "input";
+    FILE* fp = fopen(name,"r");
+
+    int sx,sy;
+
+    while(fscanf(fp,"%s",tab[n]) == 1) n++;
+    fclose(fp);
+    m=strlen(tab[0]);
+
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            if(tab[i][j] == 'S') { sy=i; sx=j; }
+            if(tab[i][j] == 'E') { ey=i; ex=j; }
+            costs[i][j]=MAX;
+        }
+    }
+
+    costs[sy][sx]=0;
+    count_path(sx,sy);
+
+    int x=sx, y=sy;
+
+    hcreate(BIGGER_N);
+
+    count_saves(x,y,x,y,1);
+
+    /*while(x!=ex || y!=ey){
+        memset(been,0,sizeof(been));
+        printf("entering cs with %d,%d\n",x,y);
+        count_saves(x,y,x,y,1);
+        for (int i=0; i<4; i++) {
+            int x2 = x + turns[i][0];
+            int y2 = y + turns[i][1];
+
+            if(x2 >= 0 && y2 >= 0 && x2 < m && y2 < n && costs[y][x] + 1 == costs[y2][x2]){
+                x=x2;
+                y=y2;
+                break;
+            }
+        }
+    }*/
+
+    hdestroy();
+
+    printf("%d - %d\n",c, sum);
+
+    return 0;
+}
